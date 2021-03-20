@@ -84,10 +84,13 @@ if __name__ == "__main__":
 		try:
 			login_response = report.login(sys.argv[1], sys.argv[2])
 		except ConnectionError:
+			retry_counter -= 1
 			continue
 		break
 	try:
-		assert "退出" in login_response.text, "Invalid password or studentID"
+		if "退出" not in login_response.text:
+			print("Invalid password or studentID")
+			print(login_response.text)
 	except NameError:
 		raise ConnectionError('Retry 5 times but still fail to log-in.')
 
@@ -99,6 +102,7 @@ if __name__ == "__main__":
 		try:
 			punchin_response = report.punchin(sys.argv[3])
 		except ConnectionError:
+			retry_counter -= 1
 			continue
 		break
 	try:
